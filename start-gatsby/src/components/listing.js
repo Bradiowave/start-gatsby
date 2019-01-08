@@ -1,9 +1,6 @@
 import React from 'react'
 import { Link, StaticQuery, graphql } from 'gatsby'
 
-import Image from '../components/image'
-import SEO from '../components/seo'
-
 const LISTING_QUERY = graphql`
     query BlogPostListing {
         allMarkdownRemark(limit: 6, sort: {

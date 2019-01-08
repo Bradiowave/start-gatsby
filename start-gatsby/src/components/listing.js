@@ -1,20 +1,43 @@
 import React from 'react'
-import { Link } from 'gatsby'
+import { Link, StaticQuery, graphql } from 'gatsby'
 
 import Image from '../components/image'
 import SEO from '../components/seo'
 
+const LISTING_QUERY = graphql`
+    query BlogPostListing {
+        allMarkdownRemark(limit: 6, sort: {
+            order: DESC
+            fields: [frontmatter___date]
+        }) {
+            edges {
+                node {
+                    excerpt
+                    frontmatter {
+                        date(formatString: "MMMM DD, YYYY")
+                        title
+                        slug
+                    }
+                }
+            }
+        }
+    }
+`
+
 const Listing = () => (
-  <div>
-    <SEO title="Home" keywords={[`gatsby`, `application`, `react`]} />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
-  </div>
+  <StaticQuery
+    query={LISTING_QUERY}
+    render={({allMarkdownRemark}) => (
+        allMarkdownRemark.edges.map(({node}) => (
+            <article key={node.frontmatter.slug}>
+                <Link to={`/posts${node.frontmatter.slug}`}><h2>{node.frontmatter.title}</h2></Link>
+                <p>{node.frontmatter.date}</p>
+                <p>{node.excerpt}</p>
+                <Link to={`/posts${node.frontmatter.slug}`}>Read More</Link>
+            </article>
+        ))
+    )}
+  />
 )
 
 export default Listing
